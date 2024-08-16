@@ -1,6 +1,8 @@
 "use client"
 import Navigation from "@/components/Navigation";
 import "./globals.css";
+// import { useEffect } from "react";
+import 'bootstrap/dist/css/bootstrap.css';
 import { useEffect } from "react";
 
 // export const metadata = {
@@ -11,7 +13,7 @@ import { useEffect } from "react";
 export default function RootLayout({ children }) {
 
   useEffect(() => {
-    import("bootstrap/dist/js/bootstrap");
+    typeof document !== undefined ? import('bootstrap/dist/js/bootstrap') : null
   }, [])
 
   return (
