@@ -18,13 +18,10 @@ const Navigation = async () => {
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item">
-                                    <a className="nav-link active" aria-current="page" href="/explore">Home</a>
-                                </li>
-                                <li className="nav-item">
                                     <a className="nav-link" href="/discussion">Discussions & Activity</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link" href="/new-discussion">Start new Discussion</a>
+                                    <a className="nav-link" href="/create-discussion">Start new Discussion</a>
                                 </li>
                                 <li className="nav-item">
                                     <a className="nav-link" href="/community">Community</a>
@@ -49,7 +46,7 @@ const Navigation = async () => {
                             </ul>
                             <form className="d-flex">
                                 <input className="form-control me-2" type="search" placeholder="Find Topics..." aria-label="Search" />
-                                <button className="btn btn-outline-success" type="submit">Search</button>
+                                <button className="btn btn-outline-secondary" type="submit">Search</button>
                             </form>
                         </div>
                     </>)

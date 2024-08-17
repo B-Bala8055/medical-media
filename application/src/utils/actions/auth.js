@@ -4,7 +4,7 @@ import { signIn, signOut } from "../authentication/auth"
 
 export const oAuthLogin = async (formdata) => {
   const action = formdata.get("action")
-  await signIn(action, { redirectTo: "/explore" })
+  await signIn(action, { redirectTo: "/discussion" })
 }
 
 export const logout = async () => {
