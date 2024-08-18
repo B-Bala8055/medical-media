@@ -1,6 +1,6 @@
 import { oAuthLogin } from '@/utils/actions/auth'
 import Image from 'next/image';
-import GoogleLogo from '../dist/icons/google.png'
+import GoogleLogo from '../static/icons/google.png'
 import DiscussionCard from '@/components/DiscussionCard';
 import VerificationCard from '@/components/VerificationCard';
 

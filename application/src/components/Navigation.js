@@ -1,6 +1,8 @@
 import React from 'react'
 import { logout, oAuthLogin } from '@/utils/actions/auth'
 import { auth } from '@/utils/authentication/auth'
+import logo from '../static/icons/logo.png'
+import Image from 'next/image'
 
 const Navigation = async () => {
     const session = await auth()
@@ -10,7 +12,9 @@ const Navigation = async () => {
             backgroundColor: "#dddddd"
         }}>
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">MedicalMedia</a>
+                <a className="navbar-brand d-flex align-self-center" href="/discussion">
+                    <Image src={logo} alt="MedicalMindsNetwork" style={{ height: '20px', width: '200px' }} />
+                </a>
                 {session?.user ? (
                     <><button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
