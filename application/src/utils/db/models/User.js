@@ -7,7 +7,7 @@ const User = mongoose.Schema({
     student: { type: Boolean, default: false },
     country: { type: String, required: true },
     witness: [String],
-    verifyIdFlag: { type: Boolean, default: true },
+    verified: { type: Boolean, default: false },
     identity: { type: String, required: true },
     reports: { type: Number, default: 0 }
 },

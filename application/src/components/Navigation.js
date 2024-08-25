@@ -25,7 +25,7 @@ const Navigation = async () => {
                                     <a className="nav-link" href="/discussion">Discussions & Activity</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link" href="/create-discussion">Start new Discussion</a>
+                                    <a className="nav-link" href="/create-discussion/new">Start new Discussion</a>
                                 </li>
                                 <li className="nav-item">
                                     <a className="nav-link" href="/community">Community</a>

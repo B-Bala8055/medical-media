@@ -3,6 +3,8 @@ import Navigation from "@/components/Navigation";
 import "./globals.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import BootstrapClient from "@/components/BootstrapClient";
+// import { auth } from "@/utils/authentication/auth";
+// import { ClientSessionProvider } from "@/utils/authentication/ClientSessionProvider";
 
 // export const metadata = {
 //   title: "Create Next App",
@@ -10,7 +12,8 @@ import BootstrapClient from "@/components/BootstrapClient";
 // };
 
 export default function RootLayout({ children }) {
-
+  // const session = await auth();
+  // <ClientSessionProvider session={session}>
   return (
     <html lang="en">
       <body>

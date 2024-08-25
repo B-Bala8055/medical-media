@@ -5,7 +5,6 @@ const Discussion = mongoose.Schema({
     explanation: { type: String, required: true },
     tags: { type: String, required: true },
     creator: { type: String, required: true },
-    discussionId: { type: String, required: true },
     mediaLinks: [String],
     upvoters: [String],
     downvoters: [String]
