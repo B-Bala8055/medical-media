@@ -47,3 +47,11 @@ export const createThread = async (formData) => {
         redirect('/discussion')
     }
 }
+
+export const getDiscussionThreadsById = async (id) => {
+
+    await connectDB()
+    const discussionThreads = await DiscussionThread.find({ discussionId: id })
+    console.log(discussionThreads.length)
+    return discussionThreads
+}

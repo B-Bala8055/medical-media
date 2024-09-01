@@ -1,35 +1,43 @@
 import ActivityCard from '@/components/ActivityCard'
 import DiscussionThread from '@/components/DiscussionThread'
+import { getOneDiscussionWithId } from '@/utils/actions/discussion'
+import { getDiscussionThreadsById } from '@/utils/actions/threads'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import millify from 'millify'
 import React from 'react'
+import striptags from 'striptags'
 
-const CurrentDiscussion = ({ params }) => {
+dayjs.extend(relativeTime)
+
+const CurrentDiscussion = async ({ params }) => {
+    const id = params?.id
+    const discussion = await getOneDiscussionWithId(id)
+    const discussionThreads = await getDiscussionThreadsById(id)
+
+    const upvoters = discussion?.upvoters || []
+    const downvoters = discussion?.downvoters || []
+    const votes = upvoters.length - downvoters.length
 
     return (
         <div className='container container-lg'>
             <div className="row mt-4">
                 <div className="col col-12 col-md-8">
-                    <div className="row">
-                        <div className="col-2 col-lg-1 d-flex flex-column justify-content-center mb-2">
-                            <button className="btn btn-light btn-sm">&#x25B2;</button>
-                            <h4 className='text-center mt-1 mb-1'>35k</h4>
-                            <button className="btn btn-light btn-sm">&#x25BC;</button>
-                        </div>
-                        <div className="col-10 col-lg-11">
-                            <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae, atque dolorum. Sint adipisci eum eius delectus eos aperiam fugit ut?</h4>
-                        </div>
-                    </div>
 
-                    <p className='mb-1' style={{ textAlign: 'justify' }}>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Incidunt, perferendis nulla, atque maxime ea accusantium illum neque quos nisi itaque vel laboriosam, ut et veritatis maiores doloribus dicta corporis dignissimos necessitatibus similique ipsum iusto. A libero optio, blanditiis rerum in est nisi, voluptates magni vero velit quo molestias obcaecati nobis nostrum architecto reprehenderit dolorem. Error asperiores inventore eius fuga dolor earum, ad consectetur, facere adipisci quaerat amet aliquam alias sint eos voluptatibus aliquid placeat consequatur exercitationem neque quidem voluptatem reiciendis provident, voluptates minima? Eligendi, ipsum. Ea vitae nostrum, necessitatibus deleniti ab, quos tenetur nihil minima velit, error ratione facilis natus!</p>
-                    <div className='d-flex align-items-center' style={{ height: '40px' }}>
+                    <h4 className="mb-4">{discussion.heading}</h4>
+
+                    <div style={{ textAlign: 'justify' }} dangerouslySetInnerHTML={{ __html: striptags(discussion.explanation, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div']) }} />
+                    <div className='d-flex flex-wrap align-items-center'>
+                        <span className="badge badge-primary bg-secondary">{millify(votes)} VOTES</span>
+                        <button className="btn btn-link btn-sm">Upvote</button>
+                        <button className="btn btn-link btn-sm">Downvote</button>
                         <button className='btn btn-link btn-sm'>Comment</button>
                         <button className='btn btn-link btn-sm'>Share</button>
-                        <small className='ms-auto pt-5 pb-5 text-muted'>Rishikesh Posted on 12/02/2024</small>
+                        <small className='ms-auto text-muted'>{discussion.creator.split("@")[0]} posted {dayjs(discussion.createdAt).fromNow()}</small>
                     </div>
                     <hr />
-                    <DiscussionThread />
-                    <DiscussionThread />
-                    <DiscussionThread />
-                    <DiscussionThread />
+                    <h5 className="mb-3">Comments</h5>
+                    <DiscussionThread threads={discussionThreads} />
                 </div>
                 <div className="col col-12 col-md-4">
                     <h4>Related</h4>
@@ -43,7 +51,7 @@ const CurrentDiscussion = ({ params }) => {
                     <ActivityCard />
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
