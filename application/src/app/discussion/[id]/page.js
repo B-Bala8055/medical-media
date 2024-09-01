@@ -1,7 +1,9 @@
 import ActivityCard from '@/components/ActivityCard'
 import DiscussionThread from '@/components/DiscussionThread'
 import React from 'react'
+
 const CurrentDiscussion = ({ params }) => {
+
     return (
         <div className='container container-lg'>
             <div className="row mt-4">

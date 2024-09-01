@@ -1,5 +1,5 @@
 "use client"
-import { getOneDiscussionWithId, submitDiscussion } from '@/utils/actions/discussion';
+import { submitDiscussion } from '@/utils/actions/discussion';
 import React, { useEffect, useState } from 'react'
 import {
     BtnBold,
@@ -27,7 +27,7 @@ const page = ({ params }) => {
 
         if (id !== 'new') {
             (async function () {
-                const api = await fetch(`/api/discussion?id=${id}`)
+                const api = await fetch(`/api/discussion/${id}`)
                 const response = await api.json()
                 if (response?.confirmation) {
                     setDiscussion(response?.discussion)
@@ -51,8 +51,8 @@ const page = ({ params }) => {
                 <label htmlFor='tag' className='form-label'>Tags</label>
                 <input id='tag' required className='form-control mb-3' type="text" name="tags" defaultValue={discussion !== null ? discussion?.tags : ""} />
 
-                {/* <label htmlFor="formFile" className="form-label">Media (Images/Docs)</label>
-                <input multiple={true} accept='.xlsx,.xls,image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf' className="form-control  mb-4" type="file" id="formFile" name="identity" /> */}
+                <label htmlFor="formFile" className="form-label">Media (Images/Docs)</label>
+                <input multiple={true} accept='.xlsx,.xls,image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf' className="form-control  mb-4" type="file" id="formFile" name="media" />
 
                 <label htmlFor='explanation' className='form-label'>Description</label>
                 <EditorProvider>
