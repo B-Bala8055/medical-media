@@ -12,6 +12,59 @@ export const getOneDiscussionWithId = async (id) => {
     return discussion;
 }
 
+export const voteDiscussion = async (formData) => {
+    const id = formData.get("id")
+    const value = Number(formData.get("vote"))
+
+    const session = await auth()
+
+    if (!session?.user) {
+        throw new Error("Unauthorized")
+    }
+
+    await connectDB()
+
+    const email = session?.user?.email
+
+    const discussion = await Discussion.findOne({ _id: id })
+
+    const upvoters = discussion?.upvoters || []
+    const downvoters = discussion?.downvoters || []
+
+    const pendingDbActions = {}
+
+    if (email !== undefined && email !== null) {
+
+        if (value === 1 && downvoters.includes(email)) {
+            pendingDbActions["$pull"] = { downvoters: email }
+            pendingDbActions["$addToSet"] = { upvoters: email }
+
+        } else if (value === -1 && upvoters.includes(email)) {
+            pendingDbActions["$pull"] = { upvoters: email }
+            pendingDbActions["$addToSet"] = { downvoters: email }
+
+        } else if (value === 1 && upvoters.includes(email)) {
+            pendingDbActions["$pull"] = { upvoters: email }
+
+        } else if (value === -1 && downvoters.includes(email)) {
+            pendingDbActions["$pull"] = { downvoters: email }
+
+        } else if (value === 1) {
+            pendingDbActions["$addToSet"] = { upvoters: email }
+
+        } else if (value === -1) {
+            pendingDbActions["$addToSet"] = { downvoters: email }
+
+        }
+
+    }
+
+    if (Object.keys(pendingDbActions).length > 0) {
+        await Discussion.findOneAndUpdate({ _id: id }, pendingDbActions, { new: true })
+    }
+
+}
+
 export const submitDiscussion = async (formData) => {
     const session = await auth()
     const id = formData.get("id")
