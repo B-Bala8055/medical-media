@@ -1,6 +1,6 @@
 import ActivityCard from '@/components/ActivityCard'
 import DiscussionThread from '@/components/DiscussionThread'
-import { getOneDiscussionWithId, voteDiscussion } from '@/utils/actions/discussion'
+import { getOneDiscussionWithId, getRelatedDiscussions, voteDiscussion } from '@/utils/actions/discussion'
 import { getDiscussionThreadsById } from '@/utils/actions/threads'
 import { auth } from '@/utils/authentication/auth'
 import dayjs from 'dayjs'
@@ -16,6 +16,12 @@ const CurrentDiscussion = async ({ params }) => {
     const id = params?.id
     const discussion = await getOneDiscussionWithId(id)
     const discussionThreads = await getDiscussionThreadsById(id)
+
+    let relatedDiscussions = []
+
+    if (discussion?.heading) {
+        relatedDiscussions = await getRelatedDiscussions(discussion?.heading)
+    }
 
     const upvoters = discussion?.upvoters || []
     const downvoters = discussion?.downvoters || []
@@ -49,14 +55,15 @@ const CurrentDiscussion = async ({ params }) => {
                 </div>
                 <div className="col col-12 col-md-4">
                     <h4>Related</h4>
+                    {/* <ActivityCard />
                     <ActivityCard />
                     <ActivityCard />
                     <ActivityCard />
                     <ActivityCard />
                     <ActivityCard />
                     <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
+                    <ActivityCard /> */}
+                    {relatedDiscussions.map((item, index) => <ActivityCard key={index} data={item} />)}
                 </div>
             </div>
         </div >

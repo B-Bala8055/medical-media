@@ -3,6 +3,7 @@ import connectDB from "../db/connect-db";
 import Discussion from "../db/models/Discussion";
 import User from "../db/models/User";
 import { auth } from "../authentication/auth";
+import { NextResponse } from "next/server";
 
 export const getOneDiscussionWithId = async (id) => {
     await connectDB()
@@ -104,4 +105,34 @@ export const submitDiscussion = async (formData) => {
     } catch (err) {
         throw new Error(err.message)
     }
+}
+
+export const getRelatedDiscussions = async (heading) => {
+    await connectDB()
+    await Discussion.ensureIndexes()
+    const discussionQuery = [
+        {
+            $match: {
+                $text: {
+                    $search: heading,
+                    $caseSensitive: false,
+                    $diacriticSensitive: false
+                }
+            }
+        },
+        {
+            $sort: {
+                score: {
+                    $meta: 'textScore'
+                }
+            }
+        },
+        {
+            $limit: 10
+        }
+    ]
+
+    const relatedDiscussions = await Discussion.aggregate(discussionQuery).exec()
+    console.log(relatedDiscussions)
+    return relatedDiscussions
 }

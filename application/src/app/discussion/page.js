@@ -1,11 +1,16 @@
 "use client"
 import ActivityCard from '@/components/ActivityCard'
 import DiscussionCard from '@/components/DiscussionCard'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import React, { useEffect, useState } from 'react'
+
+dayjs.extend(relativeTime)
 
 const Discussion = () => {
     const [page, setPage] = useState(1)
     const [discussionList, setDiscussionList] = useState([])
+    const [activityList, setActivityList] = useState([])
 
     useEffect(() => {
         (async function () {
@@ -13,7 +18,15 @@ const Discussion = () => {
             const response = await api.json()
             if (response?.confirmation) {
                 setDiscussionList(response?.discussionList)
-                window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+
+            const api2 = await fetch(`/api/activity?page=${page}`)
+            const response2 = await api2.json()
+            console.log(response2)
+            if (response2?.confirmation) {
+                const unsortedList = [...response2?.discussion, ...response2?.discussionThread]
+                const sortedList = unsortedList.sort((a, b) => dayjs(b.updatedAt).diff(a.updatedAt))
+                setActivityList(sortedList)
             }
         })()
     }, [page])
@@ -34,14 +47,8 @@ const Discussion = () => {
                 </div>
                 <div className="col col-12 col-md-4">
                     <h4 className='mt-4'>Your past activity</h4>
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
+
+                    {activityList.map((item, index) => <ActivityCard key={index} data={item} />)}
                 </div>
             </div>
         </div>

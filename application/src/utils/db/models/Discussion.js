@@ -14,4 +14,6 @@ const Discussion = mongoose.Schema({
     }
 )
 
+Discussion.index({ heading: 'text', explanation: 'text', tags: 'text' })
+
 export default mongoose.models.Discussion || mongoose.model("Discussion", Discussion);

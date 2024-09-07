@@ -35,7 +35,7 @@ const DiscussionThread = async (props) => {
                             <small dangerouslySetInnerHTML={{ __html: striptags(item.comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div']) }}></small>
                             <div className="mb-1 mt-1 d-flex align-items-center flex-wrap">
                                 <span className="badge badge-primary bg-secondary">{millify(votes)} VOTES</span>
-                                <a className="btn btn-link btn-sm" href={`/create-thread/${item.discussionId}/${item.underId}`}>Comment</a>
+                                <a className="btn btn-link btn-sm" href={`/create-thread/${item.discussionId}/${item._id}`}>Comment</a>
                                 {/* <button className="btn btn-link btn-sm">Share</button> */}
                                 <form action={voteDiscussionThread}>
                                     <input type="hidden" value={item._id.toString()} name="id" />
