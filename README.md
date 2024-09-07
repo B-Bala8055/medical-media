@@ -1,5 +1,5 @@
 # medical-media
-A free information sharing website made for doctors.
+A free information sharing website made for allopathic practitioners.
 
 ## Technology Stack
 * Next Js
@@ -14,9 +14,10 @@ A free information sharing website made for doctors.
 * Verification requires atleast 2 witness who are already a verified profile 
 * Reupload identity for re-verification (To change student status)
 
-### Discussion restriction
+### Discussion
 * Upvote and downvote to rank the discussion
-* -5 vote discussions are hidden
 
-
-## THIS IS AN OPEN SOURCE PROJECT. ANY CONTRIBUTIONS ARE WELCOME
+### ISSUES
+* Currently open article not filtered in related items (/discussion/[id])
+* Upvote and downvote dont update in realtime
+* Many authorized pages are not yet blocked from unauthorized users
