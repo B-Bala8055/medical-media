@@ -1,10 +1,10 @@
 import connectDB from '@/utils/db/connect-db'
-import Discussion from '@/utils/db/models/Discussion'
+import DiscussionThread from '@/utils/db/models/DiscussionThread'
 import mongoose from 'mongoose'
 import { NextResponse } from 'next/server'
 
-// Get all latest 
 export async function GET(request, { params }) {
+
     const { id } = params
 
     if (!mongoose.isValidObjectId(id)) {
@@ -13,10 +13,10 @@ export async function GET(request, { params }) {
 
     await connectDB()
 
-    const discussion = await Discussion.findOne({ _id: id })
+    const discussionThread = await DiscussionThread.findOne({ _id: id })
 
-    if (discussion !== null) {
-        return NextResponse.json({ confirmation: true, discussion })
+    if (discussionThread !== null) {
+        return NextResponse.json({ confirmation: true, discussionThread })
     }
-    return NextResponse.json({ confirmation: false, message: "Discussion not found" })
+    return NextResponse.json({ confirmation: false, message: "Thread not found" })
 }

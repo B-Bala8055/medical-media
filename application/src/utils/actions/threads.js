@@ -6,20 +6,56 @@ import DiscussionThread from "../db/models/DiscussionThread"
 import mongoose from "mongoose"
 import { redirect } from "next/navigation"
 import User from "../db/models/User"
+import striptags from "striptags"
+
+
+export const editThread = async (formData) => {
+    const session = await auth()
+
+    const id = formData.get("id")
+    const discussionId = formData.get("discussionId")
+    let comment = formData.get("comment")
+    const creator = session?.user?.email
+
+    comment = striptags(comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
+
+    if (!mongoose.isValidObjectId(id)) {
+        throw new Error("The thread you are trying to refer does not exist")
+    }
+
+    await connectDB()
+
+    const userExists = await User.exists({ email: creator })
+    const thread = await DiscussionThread.findOne({ _id: id })
+
+    if (thread === null) {
+        throw new Error("The thread you are trying to refer does not exist")
+    }
+
+    if (!userExists || thread?.creator !== creator) {
+        throw new Error("Unauthorized")
+    }
+
+    await DiscussionThread.findOneAndUpdate({ _id: id }, { comment }, { new: true })
+
+    redirect(`/discussion/${discussionId}`)
+}
 
 export const createThread = async (formData) => {
     const session = await auth()
 
     const discussionId = formData.get("discussionId")
     const underId = formData.get("underId")
-    const comment = formData.get("comment")
+    let comment = formData.get("comment")
     const creator = session?.user?.email
+
+    comment = striptags(comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
+
 
     if (!(mongoose.isValidObjectId(discussionId) && (underId === 'main' || mongoose.isValidObjectId(underId)))) {
         throw new Error("The discussion you are trying to refer does not exist")
 
     }
-    console.log(comment)
     await connectDB()
 
     let userExists = await User.exists({ email: creator })

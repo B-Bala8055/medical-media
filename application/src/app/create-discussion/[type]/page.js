@@ -32,6 +32,8 @@ const page = ({ params }) => {
                 if (response?.confirmation) {
                     setDiscussion(response?.discussion)
                     setExplanation(response?.discussion?.explanation)
+                } else {
+                    throw new Error(response?.message)
                 }
             })()
         }

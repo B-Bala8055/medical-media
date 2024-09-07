@@ -47,6 +47,7 @@ const CurrentDiscussion = async ({ params }) => {
                         </form>
                         <a className='btn btn-link btn-sm' href={`/create-thread/${discussion._id}/main`}>Comment</a>
                         <button className='btn btn-link btn-sm'>Share</button>
+                        {discussion?.creator === session?.user?.email && <a className='btn btn-link btn-sm' href={`/create-discussion/${discussion._id}`}>Edit</a>}
                         <small className='ms-auto text-muted'>{discussion.creator.split("@")[0]} posted {dayjs(discussion.createdAt).fromNow()}&nbsp;{dayjs(discussion.updatedAt).diff(discussion.createdAt) > 60000 && `(Edited)`}</small>
                     </div>
                     <hr />
@@ -55,15 +56,8 @@ const CurrentDiscussion = async ({ params }) => {
                 </div>
                 <div className="col col-12 col-md-4">
                     <h4>Related</h4>
-                    {/* <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard />
-                    <ActivityCard /> */}
-                    {relatedDiscussions.map((item, index) => <ActivityCard key={index} data={item} />)}
+                    {relatedDiscussions.filter(item => item._id.toString() !== id).map((item, index) => <ActivityCard key={index} data={item} />)}
+                    {relatedDiscussions.length <= 1 && <h6>No Related discussions</h6>}
                 </div>
             </div>
         </div >

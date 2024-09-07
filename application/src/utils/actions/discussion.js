@@ -3,7 +3,8 @@ import connectDB from "../db/connect-db";
 import Discussion from "../db/models/Discussion";
 import User from "../db/models/User";
 import { auth } from "../authentication/auth";
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
+import striptags from "striptags";
 
 export const getOneDiscussionWithId = async (id) => {
     await connectDB()
@@ -72,39 +73,39 @@ export const submitDiscussion = async (formData) => {
     const creator = session?.user?.email
     const heading = formData.get("heading")
     const tags = formData.get("tags")
-    const explanation = formData.get("explanation")
+    let explanation = formData.get("explanation")
 
-    // console.log(id, creator, heading, tags, explanation)
+    explanation = striptags(explanation, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
 
-    try {
-        await connectDB()
+    await connectDB()
 
-        if (id === 'new') {
+    if (id === 'new') {
 
-            const existingCreator = await User.exists({ email: creator })
+        const existingCreator = await User.exists({ email: creator })
 
-            if (creator === null || creator === undefined || !existingCreator) {
-                throw new Error("Unauthorized access!")
-            }
-
-            await Discussion.create({ heading, tags, explanation, creator })
-
-        } else {
-            const existingDiscussion = await Discussion.findOne({ _id: id })
-
-            if (existingDiscussion === null) {
-                throw new Error("The discussion you are trying to edit does not exist")
-            }
-
-            if (existingDiscussion?.creator !== creator) {
-                throw new Error("Unauthorized access!")
-            }
-
-            await Discussion.findOneAndUpdate({ _id: id }, { heading, tags, explanation }, { new: true })
+        if (creator === null || creator === undefined || !existingCreator) {
+            throw new Error("Unauthorized access!")
         }
-    } catch (err) {
-        throw new Error(err.message)
+
+        const discussionNew = await Discussion.create({ heading, tags, explanation, creator })
+
+        redirect(`/discussion/${discussionNew._id}`)
+    } else {
+        const existingDiscussion = await Discussion.findOne({ _id: id })
+
+        if (existingDiscussion === null) {
+            throw new Error("The discussion you are trying to edit does not exist")
+        }
+
+        if (existingDiscussion?.creator !== creator) {
+            throw new Error("Unauthorized access!")
+        }
+
+        const discussionEdited = await Discussion.findOneAndUpdate({ _id: id }, { heading, tags, explanation }, { new: true })
+
+        redirect(`/discussion/${discussionEdited._id}`)
     }
+
 }
 
 export const getRelatedDiscussions = async (heading) => {

@@ -25,23 +25,22 @@ const DiscussionThread = async (props) => {
                     const downvoters = item?.downvoters || []
                     const votes = upvoters.length - downvoters.length
                     const email = session?.user?.email
-                    console.log(email)
+
                     const alreadyUpvoted = upvoters.includes(email)
                     const alreadyDownvoted = downvoters.includes(email)
-                    console.log(upvoters, downvoters)
-                    console.log(item._id, alreadyUpvoted, alreadyDownvoted)
+
                     return (
                         <div className='mb-2' key={"main-" + index}>
                             <small dangerouslySetInnerHTML={{ __html: striptags(item.comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div']) }}></small>
                             <div className="mb-1 mt-1 d-flex align-items-center flex-wrap">
                                 <span className="badge badge-primary bg-secondary">{millify(votes)} VOTES</span>
-                                <a className="btn btn-link btn-sm" href={`/create-thread/${item.discussionId}/${item._id}`}>Comment</a>
-                                {/* <button className="btn btn-link btn-sm">Share</button> */}
                                 <form action={voteDiscussionThread}>
                                     <input type="hidden" value={item._id.toString()} name="id" />
                                     <button className="btn btn-link btn-sm" name="vote" value="1" type='submit'>{alreadyUpvoted ? 'Upvoted' : 'Upvote'}</button>
                                     <button className="btn btn-link btn-sm" name="vote" value="-1" type='submit'>{alreadyDownvoted ? 'Downvoted' : 'Downvote'}</button>
                                 </form>
+                                <a className="btn btn-link btn-sm" href={`/create-thread/${item.discussionId}/${item._id}`}>Comment</a>
+                                {item?.creator === session?.user?.email && <a className="btn btn-link btn-sm" href={`/create-thread/edit/main/${item.discussionId}/${item._id}`}>Edit</a>}
                                 <small className="text-muted ms-auto">{item.creator.split("@")[0]} posted {dayjs(item.createdAt).fromNow()}&nbsp;{dayjs(item.updatedAt).diff(item.createdAt) > 60000 && `(Edited)`}</small>
                             </div>
                             <div className="ms-md-4 mb-4">
@@ -54,8 +53,6 @@ const DiscussionThread = async (props) => {
 
                                             const alreadyUpvoted1 = upvoters1.includes(session?.user?.email)
                                             const alreadyDownvoted1 = downvoters1.includes(session?.user?.email)
-                                            console.log(upvoters1, downvoters1)
-                                            console.log(subItem._id, alreadyUpvoted1, alreadyDownvoted1)
 
                                             return (
                                                 <li className="list-group-item flex-wrap" key={"main-" + index + "sub-" + subIndex}>
@@ -68,6 +65,7 @@ const DiscussionThread = async (props) => {
                                                             <button className="btn btn-link btn-sm" name="vote" value="1" type='submit'>{alreadyUpvoted1 ? 'Upvoted' : 'Upvote'}</button>
                                                             <button className="btn btn-link btn-sm" name="vote" value="-1" type='submit'>{alreadyDownvoted1 ? 'Downvoted' : 'Downvote'}</button>
                                                         </form>
+                                                        {subItem?.creator === session?.user?.email && <a className="btn btn-link btn-sm" href={`/create-thread/edit/${item._id}/${item.discussionId}/${subItem._id}`}>Edit</a>}
                                                     </small>
                                                 </li>
                                             )

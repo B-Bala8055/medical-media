@@ -12,7 +12,6 @@ export async function GET(request) {
 
     const discussionList = await Discussion.find().sort({ createdAt: -1 }).skip((page - 1) * LIMIT).limit(LIMIT)
     if (discussionList !== null && discussionList.length !== 0) {
-        console.log('Return records', discussionList[0])
         return NextResponse.json({ confirmation: true, discussionList })
     }
     return NextResponse.json({ confirmation: false })
