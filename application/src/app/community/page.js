@@ -1,7 +1,27 @@
 import VerificationCard from '@/components/VerificationCard'
+import { getCurrentProfile } from '@/utils/actions/user'
+import { getUnverifiedUsers } from '@/utils/actions/verification'
+import { auth } from '@/utils/authentication/auth'
+import { redirect } from 'next/navigation'
 import React from 'react'
 
-const Community = () => {
+const Community = async () => {
+
+    const session = await auth()
+
+    if (!session?.user) {
+        redirect('/')
+    } else {
+        const email = session?.user?.email
+        const myDetails = await getCurrentProfile(email)
+
+        if (myDetails === null || !myDetails?.verified) {
+            redirect('/discussion')
+        }
+    }
+
+    const usersList = await getUnverifiedUsers()
+
     return (
         <div className='container container-lg mt-3'>
             <div className='row'>
@@ -11,38 +31,16 @@ const Community = () => {
                     </p>
                 </div>
                 <div className="col col-12 mb-5">
-                    <form>
-                        <label htmlFor="searchUserInput" className="form-label">Search people you know by their E-mail</label>
-                        <div className='row'>
-                            <div className="col-10">
-                                <input id="searchUserInput" type="text" name="search" className='form-control' placeholder='Search user...' />
-                            </div>
-                            <div className="col-2">
-
-                                <button type='submit' className='btn btn-outline-secondary'>Search</button>
-                            </div>
-                        </div>
+                    <form style={{ display: 'flex', justifyContent: 'center' }}>
+                        <input id="searchUserInput" type="text" name="search" className='form-control' placeholder='Search user by email' />&nbsp;
+                        <button type='submit' className='btn btn-outline-secondary'>Search</button>
                     </form>
                 </div>
                 <div className="col col-12">
                     <div className='d-flex flex-row flex-wrap justify-content-center'>
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
-                        <VerificationCard />
+                        {
+                            usersList.map((item, index) => <VerificationCard key={index} email={item._doc?.email} name={item._doc?.name} student={item._doc?.student} identity={item._doc?.identity} />)
+                        }
                     </div>
                 </div>
             </div>

@@ -1,19 +1,17 @@
+import { verifyId } from '@/utils/actions/verification'
 import React from 'react'
 
-const VerificationCard = () => {
+const VerificationCard = ({ email, name, student, identity }) => {
     return (
-        <div className='card m-2' style={{ width: '200px' }}>
-            <img src="https://images.pexels.com/photos/27244362/pexels-photo-27244362/free-photo-of-lakes-viti-and-oskjuvatn-on-iceland.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="card-img-top" style={{ maxWidth: '200px', aspectRatio: 3 / 2, objectFit: 'cover' }} alt="Identity" />
+        <div className='card m-2' style={{ width: '300px' }}>
             <div className='card-body'>
-                <div className="card-image"></div>
-                <form >
-                    <div className='d-block mb-2 text-center'>
-                        <input id="studentFlag" className='form-check-input' type='checkbox' name="student" defaultChecked={false} />
-                        <label className='form-check-label' htmlFor="studentFlag">&nbsp;Is Student?</label>
-                    </div>
-                    <div className='d-flex justify-content-around'>
-                        <button type="button" className="btn btn-outline-secondary">Decline</button>&nbsp;
-                        <button type="button" className="btn btn-outline-secondary">Accept</button>
+                <p><i>{name} requested to verify ID</i> <small className="text-danger">{student ? '(Student)' : '(Professional)'}</small></p>
+                <form action={verifyId}>
+                    <input type="hidden" name="email" value={email} />
+                    <div className='d-flex justify-content-center'>
+                        <a className="btn btn-sm btn-outline-secondary" target='_blank' href={identity}>Open ID</a>&nbsp;
+                        <button name='verify' value={false} type="submit" className="btn btn-sm btn-outline-secondary">Decline</button>&nbsp;
+                        <button name='verify' value={false} type="submit" className="btn btn-sm btn-outline-secondary">Accept</button>
                     </div>
                 </form>
             </div>

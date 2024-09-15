@@ -9,23 +9,24 @@ const Profile = async () => {
     const session = await auth()
 
     if (!session?.user) redirect("/")
-    console.log(session?.user?.email)
+
     let user = await getCurrentProfile(session?.user?.email)
     if (user === null) {
         user = {
             name: "",
             qualification: "",
             country: "",
-            student: false
+            student: false,
+            verified: false
         }
     }
-    console.log(user)
 
     return (
         <div className='container container-lg mt-4'>
             <div className="row">
                 <div className="col col-12 col-lg-8">
                     <h4 className='mb-4'>Edit your Profile</h4>
+                    <p className='text-danger'><b>{user?.verified ? 'Your ID Proof is verified' : 'Your ID Proof is NOT yet verified'}</b></p>
                     <form action={submitProfile}>
                         <input type='hidden' name="email" value={session?.user?.email} />
 

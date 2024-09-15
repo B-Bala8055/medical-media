@@ -1,8 +1,14 @@
 import { oAuthLogin } from '@/utils/actions/auth'
 import Image from 'next/image';
+import { redirect } from 'next/navigation'
 import GoogleLogo from '../static/icons/google.png'
+import { auth } from '@/utils/authentication/auth';
 
-export default function Home() {
+export default async function Home() {
+
+  const session = await auth()
+
+  if (session?.user) redirect("/discussion")
 
   return (
     <main className='container container-lg mt-5'>
