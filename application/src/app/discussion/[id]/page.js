@@ -27,8 +27,8 @@ const CurrentDiscussion = async ({ params }) => {
     const downvoters = discussion?.downvoters || []
     const votes = upvoters.length - downvoters.length
 
-    const alreadyUpvoted = upvoters.includes(session?.user?.email)
-    const alreadyDownvoted = downvoters.includes(session?.user?.email)
+    const alreadyUpvoted = upvoters.includes(session?.user?.email.toLowerCase())
+    const alreadyDownvoted = downvoters.includes(session?.user?.email.toLowerCase())
 
     return (
         <div className='container container-lg'>
@@ -47,7 +47,7 @@ const CurrentDiscussion = async ({ params }) => {
                         </form>
                         <a className='btn btn-link btn-sm' href={`/create-thread/${discussion._id}/main`}>Comment</a>
                         <button className='btn btn-link btn-sm'>Share</button>
-                        {discussion?.creator === session?.user?.email && <a className='btn btn-link btn-sm' href={`/create-discussion/${discussion._id}`}>Edit</a>}
+                        {discussion?.creator.toLowerCase() === session?.user?.email.toLowerCase() && <a className='btn btn-link btn-sm' href={`/create-discussion/${discussion._id}`}>Edit</a>}
                         <small className='ms-auto text-muted'>{discussion.creator.split("@")[0]} posted {dayjs(discussion.createdAt).fromNow()}&nbsp;{dayjs(discussion.updatedAt).diff(discussion.createdAt) > 60000 && `(Edited)`}</small>
                     </div>
                     <hr />

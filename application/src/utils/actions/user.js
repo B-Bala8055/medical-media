@@ -4,7 +4,7 @@ import connectDB from "../db/connect-db"
 import User from "../db/models/User"
 
 export const submitProfile = async (formData) => {
-    const email = formData.get('email')
+    const email = formData.get('email').toLowerCase()
     const name = formData.get('name')
     const qualification = formData.get('qualification')
     const country = formData.get('country')

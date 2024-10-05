@@ -7,21 +7,46 @@ export const verifyId = async (formData) => {
     const session = await auth()
 
     const email = formData.get("email")
-    const verifier = session?.user?.email
+    const verifier = session?.user?.email.toLowerCase()
     const verify = formData.get("verify")
 
     console.log(email, verifier, verify)
+
+    const verifyBoolean = (String(verify).toLowerCase() === 'true');
+
+    await connectDB()
+
+    const existingUser = await User.findOne({ email })
+
+    if (!existingUser || existingUser?.verified) {
+        // User admission declined/accepted by other user already
+        return
+    }
+
+    if (!verifyBoolean) {
+        await User.findOneAndDelete({ email })
+    } else {
+        await User.findOneAndUpdate({ email }, { verified: true, witness: [verifier] }, { new: true })
+    }
+
 }
 
-export const getUnverifiedUsers = async () => {
+export const getUnverifiedUsers = async (search) => {
     const session = await auth()
 
     if (!session?.user) {
         throw new Error("Unauthorized")
     }
     await connectDB()
-    const usersList = await User.find({ verified: { $ne: true } }).select({ email: 1, name: 1, student: 1, identity: 1 }).limit(30)
-    console.log(usersList)
+
+    const dbQueryConditions = { verified: { $ne: true } }
+
+    if (typeof search !== 'undefined' && search !== null) {
+        dbQueryConditions.email = search.toLowerCase()
+    }
+    // console.log(dbQueryConditions)
+    const usersList = await User.find(dbQueryConditions).select({ email: 1, name: 1, student: 1, identity: 1 }).limit(30)
+    // console.log(usersList)
 
     return usersList
 } 

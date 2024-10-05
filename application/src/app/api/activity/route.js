@@ -15,8 +15,8 @@ export async function GET(request) {
 
     await connectDB()
 
-    const discussion = await Discussion.find({ creator: session?.user?.email })
-    const discussionThread = await DiscussionThread.find({ creator: session?.user?.email })
+    const discussion = await Discussion.find({ creator: session?.user?.email.toLowerCase() })
+    const discussionThread = await DiscussionThread.find({ creator: session?.user?.email.toLowerCase() })
 
     return NextResponse.json({ confirmation: true, discussion, discussionThread })
 

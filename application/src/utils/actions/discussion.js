@@ -26,7 +26,7 @@ export const voteDiscussion = async (formData) => {
 
     await connectDB()
 
-    const email = session?.user?.email
+    const email = session?.user?.email.toLowerCase()
 
     const discussion = await Discussion.findOne({ _id: id })
 
@@ -70,7 +70,7 @@ export const voteDiscussion = async (formData) => {
 export const submitDiscussion = async (formData) => {
     const session = await auth()
     const id = formData.get("id")
-    const creator = session?.user?.email
+    const creator = session?.user?.email.toLowerCase()
     const heading = formData.get("heading")
     const tags = formData.get("tags")
     let explanation = formData.get("explanation")
@@ -97,7 +97,7 @@ export const submitDiscussion = async (formData) => {
             throw new Error("The discussion you are trying to edit does not exist")
         }
 
-        if (existingDiscussion?.creator !== creator) {
+        if (existingDiscussion?.creator.toLowerCase() !== creator) {
             throw new Error("Unauthorized access!")
         }
 

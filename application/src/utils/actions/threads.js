@@ -15,7 +15,7 @@ export const editThread = async (formData) => {
     const id = formData.get("id")
     const discussionId = formData.get("discussionId")
     let comment = formData.get("comment")
-    const creator = session?.user?.email
+    const creator = session?.user?.email.toLowerCase()
 
     comment = striptags(comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
 
@@ -32,7 +32,7 @@ export const editThread = async (formData) => {
         throw new Error("The thread you are trying to refer does not exist")
     }
 
-    if (!userExists || thread?.creator !== creator) {
+    if (!userExists || thread?.creator.toLowerCase() !== creator) {
         throw new Error("Unauthorized")
     }
 
@@ -47,7 +47,7 @@ export const createThread = async (formData) => {
     const discussionId = formData.get("discussionId")
     const underId = formData.get("underId")
     let comment = formData.get("comment")
-    const creator = session?.user?.email
+    const creator = session?.user?.email.toLowerCase()
 
     comment = striptags(comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
 
@@ -105,7 +105,7 @@ export const voteDiscussionThread = async (formData) => {
 
     await connectDB()
 
-    const email = session?.user?.email
+    const email = session?.user?.email.toLowerCase()
 
     const discussionThread = await DiscussionThread.findOne({ _id: id })
 

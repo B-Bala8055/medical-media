@@ -24,7 +24,7 @@ const DiscussionThread = async (props) => {
                     const upvoters = item?.upvoters || []
                     const downvoters = item?.downvoters || []
                     const votes = upvoters.length - downvoters.length
-                    const email = session?.user?.email
+                    const email = session?.user?.email.toLowerCase()
 
                     const alreadyUpvoted = upvoters.includes(email)
                     const alreadyDownvoted = downvoters.includes(email)
@@ -40,7 +40,7 @@ const DiscussionThread = async (props) => {
                                     <button className="btn btn-link btn-sm" name="vote" value="-1" type='submit'>{alreadyDownvoted ? 'Downvoted' : 'Downvote'}</button>
                                 </form>
                                 <a className="btn btn-link btn-sm" href={`/create-thread/${item.discussionId}/${item._id}`}>Comment</a>
-                                {item?.creator === session?.user?.email && <a className="btn btn-link btn-sm" href={`/create-thread/edit/main/${item.discussionId}/${item._id}`}>Edit</a>}
+                                {item?.creator.toLowerCase() === session?.user?.email.toLowerCase() && <a className="btn btn-link btn-sm" href={`/create-thread/edit/main/${item.discussionId}/${item._id}`}>Edit</a>}
                                 <small className="text-muted ms-auto">{item.creator.split("@")[0]} posted {dayjs(item.createdAt).fromNow()}&nbsp;{dayjs(item.updatedAt).diff(item.createdAt) > 60000 && `(Edited)`}</small>
                             </div>
                             <div className="ms-md-4 mb-4">
@@ -51,8 +51,8 @@ const DiscussionThread = async (props) => {
                                             const downvoters1 = subItem?.downvoters || []
                                             const votes1 = upvoters1.length - downvoters1.length
 
-                                            const alreadyUpvoted1 = upvoters1.includes(session?.user?.email)
-                                            const alreadyDownvoted1 = downvoters1.includes(session?.user?.email)
+                                            const alreadyUpvoted1 = upvoters1.includes(session?.user?.email.toLowerCase())
+                                            const alreadyDownvoted1 = downvoters1.includes(session?.user?.email.toLowerCase())
 
                                             return (
                                                 <li className="list-group-item flex-wrap" key={"main-" + index + "sub-" + subIndex}>
@@ -65,7 +65,7 @@ const DiscussionThread = async (props) => {
                                                             <button className="btn btn-link btn-sm" name="vote" value="1" type='submit'>{alreadyUpvoted1 ? 'Upvoted' : 'Upvote'}</button>
                                                             <button className="btn btn-link btn-sm" name="vote" value="-1" type='submit'>{alreadyDownvoted1 ? 'Downvoted' : 'Downvote'}</button>
                                                         </form>
-                                                        {subItem?.creator === session?.user?.email && <a className="btn btn-link btn-sm" href={`/create-thread/edit/${item._id}/${item.discussionId}/${subItem._id}`}>Edit</a>}
+                                                        {subItem?.creator.toLowerCase() === session?.user?.email.toLowerCase() && <a className="btn btn-link btn-sm" href={`/create-thread/edit/${item._id}/${item.discussionId}/${subItem._id}`}>Edit</a>}
                                                     </small>
                                                 </li>
                                             )
