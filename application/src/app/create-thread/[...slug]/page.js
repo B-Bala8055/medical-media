@@ -19,6 +19,9 @@ import {
 
 const page = ({ params }) => {
     const [explanation, setExplanation] = useState("")
+    const [submitted, setSubmitted] = useState(false)
+
+    const submitAction = () => setSubmitted(true)
 
     return (
         <div className='container container-lg mt-4'>
@@ -57,8 +60,8 @@ const page = ({ params }) => {
                 )}
                 <div className="d-flex justify-content-end">
 
-                    <button className="btn btn-outline-secondary" type='reset'>Reset</button>&nbsp;
-                    <button className="btn btn-outline-secondary" type='submit'>Submit</button>
+                    <button className="btn btn-outline-secondary" disabled={submitted} onClick={submitAction} type='reset'>Reset</button>&nbsp;
+                    <button className="btn btn-outline-secondary" disabled={submitted} onClick={submitAction} type='submit'>Submit</button>
                 </div>
             </form>
         </div>

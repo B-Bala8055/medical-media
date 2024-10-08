@@ -17,6 +17,10 @@ export const editThread = async (formData) => {
     let comment = formData.get("comment")
     const creator = session?.user?.email.toLowerCase()
 
+    if (comment.length < 5 || comment.length > 2000) {
+        throw new Error("Condition for input fields not satisfied. It is either long or short")
+    }
+
     comment = striptags(comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
 
     if (!mongoose.isValidObjectId(id)) {
@@ -48,6 +52,10 @@ export const createThread = async (formData) => {
     const underId = formData.get("underId")
     let comment = formData.get("comment")
     const creator = session?.user?.email.toLowerCase()
+
+    if (comment.length < 5 || comment.length > 2000) {
+        throw new Error("Condition for input fields not satisfied. It is either long or short")
+    }
 
     comment = striptags(comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
 

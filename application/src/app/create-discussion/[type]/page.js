@@ -22,6 +22,13 @@ const page = ({ params }) => {
     const id = params.type;
     const [explanation, setExplanation] = useState("")
     const [discussion, setDiscussion] = useState(null)
+    const [submitted, setSubmitted] = useState(false)
+
+    const submitAction = () => setSubmitted(true)
+
+    const handleExplanation = (e) => {
+        setExplanation(e.target.value)
+    }
 
     useEffect(() => {
 
@@ -45,20 +52,20 @@ const page = ({ params }) => {
             <form action={submitDiscussion}>
 
                 <input type="hidden" name="id" value={id} />
-                <input type="hidden" required name="explanation" value={explanation} />
+                <input type="hidden" name="explanation" value={explanation} />
 
                 <label htmlFor='heading' className='form-label'>Title</label>
-                <input id='heading' required className='form-control mb-3' type="text" name="heading" defaultValue={discussion !== null ? discussion?.heading : ""} />
+                <input id='heading' required maxLength={100} minLength={10} className='form-control mb-3' type="text" name="heading" defaultValue={discussion !== null ? discussion?.heading : ""} />
 
                 <label htmlFor='tag' className='form-label'>Tags</label>
-                <input id='tag' required className='form-control mb-3' type="text" name="tags" defaultValue={discussion !== null ? discussion?.tags : ""} />
+                <input id='tag' required maxLength={50} className='form-control mb-3' type="text" name="tags" defaultValue={discussion !== null ? discussion?.tags : ""} />
 
                 <label htmlFor="formFile" className="form-label">Media (Images/Docs)</label>
                 <input multiple={true} accept='.xlsx,.xls,image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf' className="form-control  mb-4" type="file" id="formFile" name="media" />
 
-                <label htmlFor='explanation' className='form-label'>Description</label>
+                <label htmlFor='explanation' className='form-label'>Description {`(${explanation.length}/2000)`}</label>
                 <EditorProvider>
-                    <Editor id='explanation' value={explanation} onChange={(e) => setExplanation(e.target.value)}>
+                    <Editor id='explanation' value={explanation} onChange={handleExplanation}>
                         <Toolbar>
                             <BtnUndo />
                             <BtnRedo />
@@ -78,8 +85,8 @@ const page = ({ params }) => {
                 </EditorProvider>
 
                 <div className="mt-4 d-flex justify-content-end">
-                    <button type="reset" className="btn btn-outline-secondary">Reset</button>&nbsp;
-                    <button type="submit" className="btn btn-outline-secondary">Submit</button>
+                    <button type="reset" disabled={submitted} onClick={submitAction} className="btn btn-outline-secondary">Reset</button>&nbsp;
+                    <button type="submit" disabled={submitted} onClick={submitAction} className="btn btn-outline-secondary">Submit</button>
                 </div>
             </form>
         </div >

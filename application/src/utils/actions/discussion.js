@@ -75,6 +75,12 @@ export const submitDiscussion = async (formData) => {
     const tags = formData.get("tags")
     let explanation = formData.get("explanation")
 
+    if (explanation.length < 20 || explanation.length > 2000 || tags.length === 0 || tags.length > 50
+        || heading.length < 10 || heading.length > 100
+    ) {
+        throw new Error("Condition for input fields not satisfied. It is either long or short")
+    }
+
     explanation = striptags(explanation, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div'])
 
     await connectDB()
