@@ -1,4 +1,4 @@
-import { voteDiscussionThread } from '@/utils/actions/threads'
+import { deleteDiscussionThread, voteDiscussionThread } from '@/utils/actions/threads'
 import { auth } from '@/utils/authentication/auth'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -40,10 +40,18 @@ const DiscussionThread = async (props) => {
                                     <button className="btn btn-link btn-sm" name="vote" value="-1" type='submit'>{alreadyDownvoted ? 'Downvoted' : 'Downvote'}</button>
                                 </form>
                                 <a className="btn btn-link btn-sm" href={`/create-thread/${item.discussionId}/${item._id}`}>Comment</a>
-                                {item?.creator.toLowerCase() === session?.user?.email.toLowerCase() && <a className="btn btn-link btn-sm" href={`/create-thread/edit/main/${item.discussionId}/${item._id}`}>Edit</a>}
+                                {item?.creator.toLowerCase() === session?.user?.email.toLowerCase() &&
+                                    <>
+                                        <a className="btn btn-link btn-sm" href={`/create-thread/edit/main/${item.discussionId}/${item._id}`}>Edit</a>
+                                        <form action={deleteDiscussionThread}>
+                                            <input type="hidden" name="discussionId" value={item.discussionId} />
+                                            <button className="btn btn-link btn-sm" type="submit" name="deleteAction" value={item._id.toString()}>Delete</button>
+                                        </form>
+                                    </>
+                                }
                                 <small className="text-muted ms-auto">{item.creator.split("@")[0]} posted {dayjs(item.createdAt).fromNow()}&nbsp;{dayjs(item.updatedAt).diff(item.createdAt) > 60000 && `(Edited)`}</small>
                             </div>
-                            <div className="ms-md-4 mb-4">
+                            <div className="ms-md-4 mb-4 mt-3">
                                 <ul className="list-group">
                                     {
                                         subThreads(item._id).map((subItem, subIndex) => {
@@ -65,7 +73,15 @@ const DiscussionThread = async (props) => {
                                                             <button className="btn btn-link btn-sm" name="vote" value="1" type='submit'>{alreadyUpvoted1 ? 'Upvoted' : 'Upvote'}</button>
                                                             <button className="btn btn-link btn-sm" name="vote" value="-1" type='submit'>{alreadyDownvoted1 ? 'Downvoted' : 'Downvote'}</button>
                                                         </form>
-                                                        {subItem?.creator.toLowerCase() === session?.user?.email.toLowerCase() && <a className="btn btn-link btn-sm" href={`/create-thread/edit/${item._id}/${item.discussionId}/${subItem._id}`}>Edit</a>}
+                                                        {subItem?.creator.toLowerCase() === session?.user?.email.toLowerCase() &&
+                                                            <>
+                                                                <a className="btn btn-link btn-sm" href={`/create-thread/edit/${item._id}/${item.discussionId}/${subItem._id}`}>Edit</a>
+                                                                <form action={deleteDiscussionThread} className='d-inline-block'>
+                                                                    <input type="hidden" name="discussionId" value={subItem.discussionId} />
+                                                                    <button className="btn btn-link btn-sm" type="submit" name="deleteAction" value={subItem._id.toString()}>Delete</button>
+                                                                </form>
+                                                            </>
+                                                        }
                                                     </small>
                                                 </li>
                                             )

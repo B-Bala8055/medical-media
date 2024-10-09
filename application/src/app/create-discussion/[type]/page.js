@@ -48,7 +48,7 @@ const page = ({ params }) => {
     }, [id])
 
     return (
-        <div className='container container-lg mt-4'>
+        <div className='container container-lg mt-4 mb-3'>
             <form action={submitDiscussion}>
 
                 <input type="hidden" name="id" value={id} />

@@ -5,6 +5,7 @@ import User from "../db/models/User";
 import { auth } from "../authentication/auth";
 import { redirect } from "next/navigation";
 import striptags from "striptags";
+import DiscussionThread from "../db/models/DiscussionThread";
 
 export const getOneDiscussionWithId = async (id) => {
     await connectDB()
@@ -142,4 +143,29 @@ export const getRelatedDiscussions = async (heading) => {
     const relatedDiscussions = await Discussion.aggregate(discussionQuery).exec()
     console.log(relatedDiscussions)
     return relatedDiscussions
+}
+
+export const deleteDiscussion = async (formData) => {
+    const id = formData.get("deleteAction")
+
+    const session = await auth()
+
+    if (!session?.user) {
+        throw new Error("Unauthorized")
+    }
+
+    await connectDB()
+
+    const email = session?.user?.email
+
+    const discussion = await Discussion.findOne({ _id: id })
+
+    if (discussion?.creator.toLowerCase() === email.toLowerCase()) {
+        await Discussion.findOneAndDelete({ _id: id })
+        await DiscussionThread.deleteMany({ discussionId: id })
+        // Pending unlink media docs code
+        redirect('/discussion')
+    } else {
+        throw new Error("Unauthorized")
+    }
 }

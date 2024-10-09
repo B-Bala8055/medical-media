@@ -153,3 +153,32 @@ export const voteDiscussionThread = async (formData) => {
     }
 
 }
+
+export const deleteDiscussionThread = async (formData) => {
+    const id = formData.get("deleteAction")
+    const discussionId = formData.get("discussionId")
+
+    if (!mongoose.isValidObjectId(id)) {
+        throw new Error("Invalid Request!")
+    }
+
+    const session = await auth()
+
+    if (!session?.user) {
+        throw new Error("Unauthorized")
+    }
+
+    await connectDB()
+
+    const email = session?.user?.email
+
+    const discussionThread = await DiscussionThread.findOne({ _id: id })
+
+    if (discussionThread?.creator.toLowerCase() === email.toLowerCase()) {
+        await DiscussionThread.deleteMany({ $or: [{ _id: id }, { underId: id }] })
+        // Pending unlink media docs code
+        redirect(`/discussion/${discussionId}`)
+    } else {
+        throw new Error("Unauthorized")
+    }
+}
