@@ -9,8 +9,10 @@ A free information sharing website made for allopathic practitioners.
 ## Functional
 
 ### Pending
-* Delete function for discussions
+* Share button
+* Media file connection
+* Loading in client side pages
 
 ### ISSUES
-* Upvote and downvote dont update in realtime
+* Upvote and downvote dont update in realtime since it is a server ui component
 * Many authorized pages are not yet blocked from unauthorized users
