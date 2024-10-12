@@ -11,7 +11,6 @@ A free information sharing website made for allopathic practitioners.
 ### Pending
 * Share button
 * Media file connection
-* Loading in client side pages
 
 ### ISSUES
 * Upvote and downvote dont update in realtime since it is a server ui component

@@ -55,9 +55,10 @@ const Navigation = async () => {
                         </div>
                     </>)
                     : (
-                        <form className="d-flex" action={oAuthLogin} >
-                            <button className="btn btn-outline-success" type="submit" name="action" value="google">Sign In</button>
-                        </form>
+                        // <form className="d-flex" action={oAuthLogin} >
+                        //     <button className="btn btn-outline-secondary" type="submit" name="action" value="google">Sign In</button>
+                        // </form>
+                        <a className="btn btn-outline-secondary" href="/">Sign In</a>
                     )
                 }
             </div>

@@ -70,6 +70,11 @@ export const voteDiscussion = async (formData) => {
 
 export const submitDiscussion = async (formData) => {
     const session = await auth()
+
+    if (!session?.user) {
+        redirect("/")
+    }
+
     const id = formData.get("id")
     const creator = session?.user?.email.toLowerCase()
     const heading = formData.get("heading")

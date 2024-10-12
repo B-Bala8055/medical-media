@@ -38,7 +38,7 @@ const CurrentDiscussion = async ({ params }) => {
                     <h4 className="mb-4">{discussion.heading}</h4>
 
                     <div style={{ textAlign: 'justify' }} dangerouslySetInnerHTML={{ __html: striptags(discussion.explanation, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div']) }} />
-                    <div className='d-flex flex-wrap align-items-center'>
+                    <div className='d-flex flex-wrap align-items-center mt-2'>
                         <span id="votes" className="badge badge-primary bg-secondary">{millify(votes)} VOTES</span>
                         <form action={voteDiscussion}>
                             <input type="hidden" value={discussion._id.toString()} name="id" />
