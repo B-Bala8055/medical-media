@@ -48,8 +48,8 @@ const Navigation = async () => {
                                     <a className="nav-link disabled" href="#" tabIndex="-1" aria-disabled="true">Disabled</a>
                                 </li> */}
                             </ul>
-                            <form className="d-flex">
-                                <input className="form-control me-2" type="search" placeholder="Find Topics..." aria-label="Search" />
+                            <form className="d-flex" method='GET' action='/discussion'>
+                                <input name="q" className="form-control me-2" type="search" placeholder="Find Topics..." aria-label="Search" />
                                 <button className="btn btn-outline-secondary" type="submit">Search</button>
                             </form>
                         </div>
