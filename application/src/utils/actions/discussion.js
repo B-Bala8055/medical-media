@@ -12,6 +12,10 @@ export const getOneDiscussionWithId = async (id) => {
 
     const discussion = await Discussion.findOne({ _id: id })
 
+    if (discussion === null) {
+        throw new Error("This discussion doesn't exist.")
+    }
+
     return discussion;
 }
 

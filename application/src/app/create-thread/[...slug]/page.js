@@ -2,6 +2,7 @@
 import ClientError from '@/components/ClientError';
 import { createThread } from '@/utils/actions/threads';
 import { checkEligibility_createDiscussion } from '@/utils/common/apiCalls';
+import { redirect } from 'next/navigation';
 import React, { useState, useEffect } from 'react'
 import {
     BtnBold,
@@ -39,7 +40,7 @@ const page = ({ params }) => {
                         <input type="hidden" name="discussionId" value={params.slug[0]} />
                         <input type="hidden" name="underId" value={params.slug[1]} />
                         <input type="hidden" name="comment" value={explanation} />
-                        <label htmlFor="explanation" className='form-label'>Comment</label>
+                        <label htmlFor="explanation" className='form-label'>Comment {`(${explanation.length}/1400)`}</label>
                         <div className="mb-3">
                             <EditorProvider>
                                 <Editor id='explanation' value={explanation} onChange={(e) => setExplanation(e.target.value)}>

@@ -17,7 +17,7 @@ export const editThread = async (formData) => {
     let comment = formData.get("comment")
     const creator = session?.user?.email.toLowerCase()
 
-    if (comment.length < 5 || comment.length > 2000) {
+    if (comment.length < 5 || comment.length > 1400) {
         throw new Error("Condition for input fields not satisfied. It is either long or short")
     }
 
@@ -53,7 +53,7 @@ export const createThread = async (formData) => {
     let comment = formData.get("comment")
     const creator = session?.user?.email.toLowerCase()
 
-    if (comment.length < 5 || comment.length > 2000) {
+    if (comment.length < 5 || comment.length > 1400) {
         throw new Error("Condition for input fields not satisfied. It is either long or short")
     }
 

@@ -77,6 +77,7 @@ const page = ({ params }) => {
             (async function () {
                 const status = await checkEligibility_createDiscussion('false', (error) => dispatch({ type: "set_error", error }))
                 if (status === false) {
+                    loadingOFF()
                     return;
                 }
                 const api = await fetch(`/api/discussion/${id}`)
@@ -86,11 +87,12 @@ const page = ({ params }) => {
                 } else {
                     dispatch({ type: "set_error", error: response?.message })
                 }
+                loadingOFF()
             })()
         } else {
             checkEligibility_createDiscussion('false', (error) => dispatch({ type: "set_error", error }))
+            loadingOFF()
         }
-        loadingOFF()
     }, [id])
 
     return (

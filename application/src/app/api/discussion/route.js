@@ -14,5 +14,5 @@ export async function GET(request) {
     if (discussionList !== null && discussionList.length !== 0) {
         return NextResponse.json({ confirmation: true, discussionList })
     }
-    return NextResponse.json({ confirmation: false })
+    return NextResponse.json({ confirmation: false, message: "No more discussions" })
 }

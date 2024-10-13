@@ -32,7 +32,7 @@ const CurrentDiscussion = async ({ params }) => {
 
     return (
         <div className='container container-lg'>
-            <div className="row mt-4">
+            <div className="row mt-4 mb-3">
                 <div className="col col-12 col-md-8">
 
                     <h4 className="mb-4">{discussion.heading}</h4>

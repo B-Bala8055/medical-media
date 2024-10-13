@@ -67,6 +67,7 @@ const page = ({ params }) => {
         (async function () {
             const status = await checkEligibility_createDiscussion('true', (error) => dispatch({ type: "set_error", error }));
             if (status === false) {
+                loadingOFF()
                 return;
             }
             const api = await fetch(`/api/thread/${params.slug[2]}`)
@@ -76,8 +77,8 @@ const page = ({ params }) => {
             } else {
                 dispatch({ type: "set_error", error: response?.message })
             }
+            loadingOFF()
         })()
-        loadingOFF()
     }, [params.slug[2]])
 
     return (
@@ -97,7 +98,7 @@ const page = ({ params }) => {
                                 <input type="hidden" name="id" value={params.slug[2]} />
                                 <input type="hidden" name="discussionId" value={params.slug[1]} />
                                 <input type="hidden" name="comment" value={state.explanation} />
-                                <label htmlFor="explanation" className='form-label'>Comment</label>
+                                <label htmlFor="explanation" className='form-label'>Comment {`(${state.explanation.length}/1400)`}</label>
                                 <div className="mb-3">
                                     <EditorProvider>
                                         <Editor id='explanation' value={state.explanation} onChange={handleExplanation}>
