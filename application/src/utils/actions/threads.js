@@ -7,6 +7,7 @@ import mongoose from "mongoose"
 import { redirect } from "next/navigation"
 import User from "../db/models/User"
 import striptags from "striptags"
+import { deleteMultipleFiles, deleteSingleFile, uploadFileList } from "../helpers/cdn"
 
 
 export const editThread = async (formData) => {
@@ -14,6 +15,7 @@ export const editThread = async (formData) => {
 
     const id = formData.get("id")
     const discussionId = formData.get("discussionId")
+    const media = formData.getAll("media")
     let comment = formData.get("comment")
     const creator = session?.user?.email.toLowerCase()
 
@@ -40,7 +42,17 @@ export const editThread = async (formData) => {
         throw new Error("Unauthorized")
     }
 
-    await DiscussionThread.findOneAndUpdate({ _id: id }, { comment }, { new: true })
+    const existingMedia = thread?.mediaLinks || []
+    let newMedias = []
+    console.log(existingMedia)
+    if (media.length > 0 && media[0].size !== 0 && existingMedia.length < 3) {
+        console.log("Have more space for new documents")
+        const uploadData = await uploadFileList(media.sort((a, b) => a.size - b.size).slice(0, (3 - existingMedia.length)))
+        console.log(uploadData.success)
+        newMedias = uploadData.success
+    }
+
+    await DiscussionThread.findOneAndUpdate({ _id: id }, { comment, mediaLinks: [...existingMedia, ...newMedias] }, { new: true })
 
     redirect(`/discussion/${discussionId}`)
 }
@@ -50,6 +62,7 @@ export const createThread = async (formData) => {
 
     const discussionId = formData.get("discussionId")
     const underId = formData.get("underId")
+    const media = formData.getAll("media")
     let comment = formData.get("comment")
     const creator = session?.user?.email.toLowerCase()
 
@@ -83,7 +96,10 @@ export const createThread = async (formData) => {
         throw new Error("The discussion you are trying to refer does not exist")
     }
 
-    await DiscussionThread.create({ discussionId, underId, creator, comment })
+    const mediaUploads = await uploadFileList(media.sort((a, b) => a.size - b.size).slice(0, 3))
+
+
+    await DiscussionThread.create({ discussionId, underId, creator, comment, mediaLinks: mediaUploads.success })
 
     if (discussionExists) {
         redirect(`/discussion/${discussionId}`)
@@ -175,10 +191,30 @@ export const deleteDiscussionThread = async (formData) => {
     const discussionThread = await DiscussionThread.findOne({ _id: id })
 
     if (discussionThread?.creator.toLowerCase() === email.toLowerCase()) {
+
+        await deleteMultipleFiles(discussionThread?.mediaLinks || [])
+
         await DiscussionThread.deleteMany({ $or: [{ _id: id }, { underId: id }] })
         // Pending unlink media docs code
         redirect(`/discussion/${discussionId}`)
     } else {
         throw new Error("Unauthorized")
     }
+}
+
+
+export const deleteMediaFromDiscussionThread = async (formData) => {
+    const discussionId = formData.get("discussionId")
+    const discussionThreadId = formData.get("discussionThreadId")
+    const mediaFileName = formData.get("mediaFileName")
+
+    await deleteSingleFile(mediaFileName)
+
+    try {
+        await DiscussionThread.findOneAndUpdate({ _id: discussionThreadId }, { $pull: { mediaLinks: mediaFileName } }, { new: true })
+    } catch (error) {
+        throw new Error("Delete Failed.")
+    }
+
+    redirect(`/discussion/${discussionId}`)
 }

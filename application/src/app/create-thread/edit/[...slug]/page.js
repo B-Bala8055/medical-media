@@ -1,7 +1,7 @@
 "use client"
 import ClientError from '@/components/ClientError';
 import Loading from '@/components/Loading/Loading';
-import { editThread } from '@/utils/actions/threads';
+import { deleteMediaFromDiscussionThread, editThread } from '@/utils/actions/threads';
 import { checkEligibility_createDiscussion } from '@/utils/common/apiCalls';
 import { redirect } from 'next/navigation';
 import React, { useEffect, useReducer } from 'react'
@@ -29,6 +29,7 @@ const page = ({ params }) => {
 
     const initialState = {
         explanation: "",
+        thread: null,
         submitted: false,
         loadingFlag: true,
         error: null
@@ -38,6 +39,9 @@ const page = ({ params }) => {
         switch (action.type) {
             case "set_explanation": {
                 return { ...state, explanation: action.explanation }
+            }
+            case "set_thread": {
+                return { ...state, thread: action.thread }
             }
             case "submit_flag": {
                 return { ...state, submitted: action.submitted }
@@ -73,6 +77,7 @@ const page = ({ params }) => {
             const api = await fetch(`/api/thread/${params.slug[2]}`)
             const response = await api.json()
             if (response?.confirmation) {
+                dispatch({ type: "set_thread", thread: response?.discussionThread })
                 dispatch({ type: "set_explanation", explanation: response?.discussionThread?.comment })
             } else {
                 dispatch({ type: "set_error", error: response?.message })
@@ -94,6 +99,25 @@ const page = ({ params }) => {
                     (state.error === null ?
                         <>
                             <h4 className='mb-4'>Edit your Thread</h4>
+                            {(state?.thread !== null && state?.thread?.mediaLinks.length > 0) && <form action={deleteMediaFromDiscussionThread}>
+                                <input type="hidden" name="discussionId" value={state?.thread?.discussionId.toString()} />
+                                <input type="hidden" name="discussionThreadId" value={state?.thread?._id.toString()} />
+                                <div className='card mt-3 mb-4'>
+                                    <div className="card-header">Delete Media</div>
+                                    <div className="card-body">
+                                        {
+                                            state?.thread?.mediaLinks.map((mediaUrl, linkIndex) => {
+                                                return (
+                                                    <div className="d-flex" key={linkIndex}>
+                                                        <a href={mediaUrl} target='_blank' className="link-dark link-underline link-underline-opacity-0 me-2"><small>{mediaUrl.split("/").pop()}</small></a>
+                                                        <button className="btn btn-sm btn-link" name="mediaFileName" value={mediaUrl} type="submit">Delete</button>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                            </form>}
                             <form action={editThread}>
                                 <input type="hidden" name="id" value={params.slug[2]} />
                                 <input type="hidden" name="discussionId" value={params.slug[1]} />
@@ -122,8 +146,8 @@ const page = ({ params }) => {
                                 </div>
                                 {params.slug[0] === 'main' && (
                                     <>
-                                        <label htmlFor="media" className='form-label'>Attach Media</label>
-                                        <input multiple={true} accept='.xlsx,.xls,image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf' className="form-control  mb-4" type="file" id="formFile" name="media" />
+                                        <label htmlFor="media" className='form-label'>Attach Media 	&#183; Max 3 files | 2 MB each</label>
+                                        <input multiple={true} accept='image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf,.odt,.odp' className="form-control  mb-4" type="file" id="formFile" name="media" />
                                     </>
                                 )}
                                 <div className="d-flex justify-content-end">

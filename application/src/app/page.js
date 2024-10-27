@@ -2,6 +2,8 @@ import { oAuthLogin } from '@/utils/actions/auth'
 import Image from 'next/image';
 import { redirect } from 'next/navigation'
 import GoogleLogo from '../static/icons/google.png'
+import YandexLogo from '../static/icons/yandex.svg'
+import FacebookLogo from '../static/icons/facebook.png'
 import { auth } from '@/utils/authentication/auth';
 
 export default async function Home() {
@@ -13,15 +15,23 @@ export default async function Home() {
   return (
     <main className='container container-lg mt-5 mb-3'>
       <div className='row'>
-        <div className='col-12 col-sm-12 col-md-4'>
-          <div className="card" style={{ height: '70vh' }}>
+        <div className='col-12 col-sm-12 col-md-4 mb-3'>
+          <div className="card pb-2" style={{ height: 'auto' }}>
             <div className="card-body text-center">
               <h4 className='mb-2'>Authenticate</h4>
               <p className="text-muted"><small>We currently offer the following modes of authentication. By Signing in, you agree to our terms and conditions.</small></p>
               <form action={oAuthLogin}>
-                <button className='btn btn-outline-dark' type="submit" name="action" value="google">
+                <button className='btn btn-outline-dark mb-3' style={{ width: '80%' }} type="submit" name="action" value="google">
                   <Image style={{ marginBottom: '3px', marginRight: '5px', width: "30px", height: "30px" }} alt="Google" src={GoogleLogo} />
                   Continue with Google
+                </button>
+                <button className='btn btn-primary mb-3' style={{ width: '80%' }} type="submit" name="action" value="facebook">
+                  <Image style={{ marginBottom: '3px', marginRight: '8px', width: "30px", height: "30px" }} alt="Facebook" src={FacebookLogo} />
+                  Login with Facebook
+                </button>
+                <button className='btn btn-dark' style={{ width: '80%' }} type="submit" name="action" value="yandex">
+                  <Image style={{ marginBottom: '3px', marginRight: '5px', width: "30px", height: "30px" }} alt="Yandex" src={YandexLogo} />
+                  Continue with Yandex
                 </button>
               </form>
             </div>

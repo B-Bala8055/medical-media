@@ -64,8 +64,8 @@ const page = ({ params }) => {
                         </div>
                         {params.slug[1] === 'main' && (
                             <>
-                                <label htmlFor="media" className='form-label'>Attach Media</label>
-                                <input multiple={true} accept='.xlsx,.xls,image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf' className="form-control  mb-4" type="file" id="formFile" name="media" />
+                                <label htmlFor="media" className='form-label'>Attach Media 	&#183; Max 3 files | 2 MB each</label>
+                                <input multiple={true} accept='image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf,.odt,.odp' className="form-control  mb-4" type="file" id="formFile" name="media" />
                             </>
                         )}
                         <div className="d-flex justify-content-end">

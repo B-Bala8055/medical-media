@@ -1,7 +1,7 @@
 "use client"
 import ClientError from '@/components/ClientError';
 import Loading from '@/components/Loading/Loading';
-import { submitDiscussion } from '@/utils/actions/discussion';
+import { deleteMediaFromDiscussion, submitDiscussion } from '@/utils/actions/discussion';
 import { checkEligibility_createDiscussion } from '@/utils/common/apiCalls';
 import { redirect } from 'next/navigation';
 import React, { useEffect, useReducer } from 'react'
@@ -75,7 +75,7 @@ const page = ({ params }) => {
 
         if (id !== 'new') {
             (async function () {
-                const status = await checkEligibility_createDiscussion('false', (error) => dispatch({ type: "set_error", error }))
+                const status = await checkEligibility_createDiscussion('true', (error) => dispatch({ type: "set_error", error }))
                 if (status === false) {
                     loadingOFF()
                     return;
@@ -106,45 +106,66 @@ const page = ({ params }) => {
                 )
                     :
                     (state?.error === null ?
-                        <form action={submitDiscussion}>
-                            <input type="hidden" name="id" value={id} />
-                            <input type="hidden" name="explanation" value={state.explanation} />
+                        <>
+                            <h4 className='mb-4'>Create a Discussion</h4>
 
-                            <label htmlFor='heading' className='form-label'>Title</label>
-                            <input id='heading' required maxLength={100} minLength={10} className='form-control mb-3' type="text" name="heading" defaultValue={state?.discussion !== null ? state?.discussion?.heading : ""} />
+                            {(state?.discussion !== null && state?.discussion?.mediaLinks.length > 0) && <form action={deleteMediaFromDiscussion}>
+                                <input type="hidden" name="discussionId" value={state?.discussion?._id.toString()} />
+                                <div className='card mt-3 mb-4'>
+                                    <div className="card-header">Delete Media</div>
+                                    <div className="card-body">
+                                        {
+                                            state?.discussion?.mediaLinks.map((item, index) => {
+                                                return (
+                                                    <div className="d-flex" key={index}>
+                                                        <a href={item} target='_blank' className="link-dark link-underline link-underline-opacity-0 me-2"><small>{item.split("/").pop()}</small></a>
+                                                        <button className="btn btn-sm btn-link" name="mediaFileName" value={item} type="submit">Delete</button>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                            </form>}
+                            <form action={submitDiscussion}>
+                                <input type="hidden" name="id" value={id} />
+                                <input type="hidden" name="explanation" value={state.explanation} />
 
-                            <label htmlFor='tag' className='form-label'>Tags</label>
-                            <input id='tag' required maxLength={50} className='form-control mb-3' type="text" name="tags" defaultValue={state?.discussion !== null ? state?.discussion?.tags : ""} />
+                                <label htmlFor='heading' className='form-label'>Title</label>
+                                <input id='heading' required maxLength={100} minLength={10} className='form-control mb-3' type="text" name="heading" defaultValue={state?.discussion !== null ? state?.discussion?.heading : ""} />
 
-                            <label htmlFor="formFile" className="form-label">Media (Images/Docs)</label>
-                            <input multiple={true} accept='.xlsx,.xls,image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf' className="form-control  mb-4" type="file" id="formFile" name="media" />
+                                <label htmlFor='tag' className='form-label'>Tags</label>
+                                <input id='tag' required maxLength={50} className='form-control mb-3' type="text" name="tags" defaultValue={state?.discussion !== null ? state?.discussion?.tags : ""} />
 
-                            <label htmlFor='explanation' className='form-label'>Description {`(${state?.explanation.length}/2000)`}</label>
-                            <EditorProvider>
-                                <Editor id='explanation' value={state?.explanation} onChange={handleExplanation}>
-                                    <Toolbar>
-                                        <BtnUndo />
-                                        <BtnRedo />
-                                        <Separator />
-                                        <BtnBold />
-                                        <BtnItalic />
-                                        <BtnUnderline />
-                                        <BtnLink />
-                                        <Separator />
-                                        <BtnBulletList />
-                                        <BtnNumberedList />
-                                        <Separator />
-                                        <BtnClearFormatting />
-                                        <Separator />
-                                    </Toolbar>
-                                </Editor>
-                            </EditorProvider>
+                                <label htmlFor="formFile" className="form-label">Media 	&#183; Max 5 files | 2 MB each</label>
+                                <input multiple={true} accept='image/*,.doc,.docx,.ppt,.pptx,.txt,.pdf,.odt,.odp' className="form-control  mb-4" type="file" id="formFile" name="media" />
 
-                            <div className="mt-4 d-flex justify-content-end">
-                                <button type="reset" disabled={state?.submitted} onClick={submitAction} className="btn btn-outline-secondary">Reset</button>&nbsp;
-                                <button type="submit" disabled={state?.submitted} onClick={submitAction} className="btn btn-outline-secondary">Submit</button>
-                            </div>
-                        </form> : <ClientError error={state?.error} reset={() => redirect("/")} />
+                                <label htmlFor='explanation' className='form-label'>Description {`(${state?.explanation.length}/2000)`}</label>
+                                <EditorProvider>
+                                    <Editor id='explanation' value={state?.explanation} onChange={handleExplanation}>
+                                        <Toolbar>
+                                            <BtnUndo />
+                                            <BtnRedo />
+                                            <Separator />
+                                            <BtnBold />
+                                            <BtnItalic />
+                                            <BtnUnderline />
+                                            <BtnLink />
+                                            <Separator />
+                                            <BtnBulletList />
+                                            <BtnNumberedList />
+                                            <Separator />
+                                            <BtnClearFormatting />
+                                            <Separator />
+                                        </Toolbar>
+                                    </Editor>
+                                </EditorProvider>
+
+                                <div className="mt-4 d-flex justify-content-end">
+                                    <button type="reset" disabled={state?.submitted} onClick={submitAction} className="btn btn-outline-secondary">Reset</button>&nbsp;
+                                    <button type="submit" disabled={state?.submitted} onClick={submitAction} className="btn btn-outline-secondary">Submit</button>
+                                </div>
+                            </form> </> : <ClientError error={state?.error} reset={() => redirect("/")} />
                     )}
         </div >
     )

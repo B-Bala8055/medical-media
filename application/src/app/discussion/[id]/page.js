@@ -2,6 +2,7 @@ import ActivityCard from '@/components/ActivityCard'
 import DiscussionThread from '@/components/DiscussionThread'
 import { deleteDiscussion, getOneDiscussionWithId, getRelatedDiscussions, voteDiscussion } from '@/utils/actions/discussion'
 import { getDiscussionThreadsById } from '@/utils/actions/threads'
+import { getCurrentProfile } from '@/utils/actions/user'
 import { auth } from '@/utils/authentication/auth'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -16,6 +17,9 @@ const CurrentDiscussion = async ({ params }) => {
     const id = params?.id
     const discussion = await getOneDiscussionWithId(id)
     const discussionThreads = await getDiscussionThreadsById(id)
+    const registeredUser = await getCurrentProfile(session?.user?.email)
+
+    const isVerifiedUser = registeredUser === null ? false : registeredUser?.verified
 
     let relatedDiscussions = []
 
@@ -38,6 +42,13 @@ const CurrentDiscussion = async ({ params }) => {
                     <h4 className="mb-4">{discussion.heading}</h4>
 
                     <div style={{ textAlign: 'justify' }} dangerouslySetInnerHTML={{ __html: striptags(discussion.explanation, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div']) }} />
+
+                    {discussion?.mediaLinks.length > 0 &&
+                        <div className="d-flex flex-wrap mb-3 mt-2">
+                            {isVerifiedUser ? discussion?.mediaLinks.map((item, index) => <a key={index} href={item} target='_blank' className='link-secondary me-2'><small>{item.split("/").pop()}</small></a>) : <p><small className='text-muted'>Media files are hidden, because your ID is not verified.</small></p>}
+                        </div>
+                    }
+
                     <div className='d-flex flex-wrap align-items-center mt-2'>
                         <span id="votes" className="badge badge-primary bg-secondary">{millify(votes)} VOTES</span>
                         <form action={voteDiscussion}>
@@ -46,7 +57,7 @@ const CurrentDiscussion = async ({ params }) => {
                             <button id="downvote" className="btn btn-link btn-sm" name="vote" value="-1" type='submit' >{alreadyDownvoted ? 'Downvoted' : 'Downvote'}</button>
                         </form>
                         <a className='btn btn-link btn-sm' href={`/create-thread/${discussion._id}/main`}>Comment</a>
-                        <button className='btn btn-link btn-sm'>Share</button>
+                        {/* <button className='btn btn-link btn-sm'>Share</button> */}
                         {discussion?.creator.toLowerCase() === session?.user?.email.toLowerCase() &&
                             <>
                                 <a className='btn btn-link btn-sm' href={`/create-discussion/${discussion._id}`}>Edit</a>
@@ -55,11 +66,11 @@ const CurrentDiscussion = async ({ params }) => {
                                 </form>
                             </>
                         }
-                        <small className='ms-auto text-muted'>{discussion.creator.split("@")[0]} posted {dayjs(discussion.createdAt).fromNow()}&nbsp;{dayjs(discussion.updatedAt).diff(discussion.createdAt) > 60000 && `(Edited)`}</small>
+                        <small className='ms-auto text-muted'>{dayjs(discussion.createdAt).fromNow()}&nbsp;{dayjs(discussion.updatedAt).diff(discussion.createdAt) > 600000 && `(Edited)`}</small>
                     </div>
                     <hr />
                     <h5 className="mb-3">Comments</h5>
-                    <DiscussionThread threads={discussionThreads} />
+                    <DiscussionThread threads={discussionThreads} isVerifiedUser={isVerifiedUser} />
                 </div>
                 <div className="col col-12 col-md-4">
                     <h4>Related</h4>

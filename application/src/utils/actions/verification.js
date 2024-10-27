@@ -26,7 +26,7 @@ export const verifyId = async (formData) => {
     if (!verifyBoolean) {
         await User.findOneAndDelete({ email })
     } else {
-        await User.findOneAndUpdate({ email }, { verified: true, witness: [verifier] }, { new: true })
+        await User.findOneAndUpdate({ email }, { verified: true, witness: [verifier], identity: "" }, { new: true })
     }
 
 }

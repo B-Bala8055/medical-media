@@ -6,6 +6,7 @@ import { auth } from "../authentication/auth";
 import { redirect } from "next/navigation";
 import striptags from "striptags";
 import DiscussionThread from "../db/models/DiscussionThread";
+import { deleteMultipleFiles, deleteSingleFile, uploadFileList } from "../helpers/cdn";
 
 export const getOneDiscussionWithId = async (id) => {
     await connectDB()
@@ -83,6 +84,7 @@ export const submitDiscussion = async (formData) => {
     const creator = session?.user?.email.toLowerCase()
     const heading = formData.get("heading")
     const tags = formData.get("tags")
+    const media = formData.getAll("media")
     let explanation = formData.get("explanation")
 
     if (explanation.length < 20 || explanation.length > 2000 || tags.length === 0 || tags.length > 50
@@ -103,7 +105,9 @@ export const submitDiscussion = async (formData) => {
             throw new Error("Unauthorized access!")
         }
 
-        const discussionNew = await Discussion.create({ heading, tags, explanation, creator })
+        const mediaUploads = await uploadFileList(media.sort((a, b) => a.size - b.size).slice(0, 5))
+
+        const discussionNew = await Discussion.create({ heading, tags, explanation, creator, mediaLinks: mediaUploads.success })
 
         redirect(`/discussion/${discussionNew._id}`)
     } else {
@@ -117,7 +121,17 @@ export const submitDiscussion = async (formData) => {
             throw new Error("Unauthorized access!")
         }
 
-        const discussionEdited = await Discussion.findOneAndUpdate({ _id: id }, { heading, tags, explanation }, { new: true })
+        const existingMedia = existingDiscussion?.mediaLinks || []
+        let newMedias = []
+        console.log(existingMedia)
+        if (media.length > 0 && media[0].size !== 0 && existingMedia.length < 5) {
+            console.log("Have more space for new documents")
+            const uploadData = await uploadFileList(media.sort((a, b) => a.size - b.size).slice(0, (5 - existingMedia.length)))
+            console.log(uploadData.success)
+            newMedias = uploadData.success
+        }
+
+        const discussionEdited = await Discussion.findOneAndUpdate({ _id: id }, { heading, tags, explanation, mediaLinks: [...existingMedia, ...newMedias] }, { new: true })
 
         redirect(`/discussion/${discussionEdited._id}`)
     }
@@ -150,7 +164,7 @@ export const getRelatedDiscussions = async (heading) => {
     ]
 
     const relatedDiscussions = await Discussion.aggregate(discussionQuery).exec()
-    console.log(relatedDiscussions)
+
     return relatedDiscussions
 }
 
@@ -170,11 +184,38 @@ export const deleteDiscussion = async (formData) => {
     const discussion = await Discussion.findOne({ _id: id })
 
     if (discussion?.creator.toLowerCase() === email.toLowerCase()) {
+
+        await deleteMultipleFiles(discussion?.mediaLinks || [])
+        const allThreads = await DiscussionThread.find({ discussionId: id })
+
+        for (let i = 0; i < allThreads.length; i++) {
+            await deleteMultipleFiles(allThreads[i]?.mediaLinks || [])
+        }
+
         await Discussion.findOneAndDelete({ _id: id })
         await DiscussionThread.deleteMany({ discussionId: id })
-        // Pending unlink media docs code
+
         redirect('/discussion')
     } else {
         throw new Error("Unauthorized")
     }
+}
+
+export const deleteMediaFromDiscussion = async (formData) => {
+    const discussionId = formData.get("discussionId")
+    const mediaFileName = formData.get("mediaFileName")
+
+    if (discussionId === 'new') {
+        throw new Error("Invalid Attempt")
+    }
+
+    await deleteSingleFile(mediaFileName)
+
+    try {
+        await Discussion.findOneAndUpdate({ _id: discussionId }, { $pull: { mediaLinks: mediaFileName } }, { new: true })
+    } catch (error) {
+        throw new Error("Delete Failed.")
+    }
+
+    redirect(`/discussion/${discussionId}`)
 }

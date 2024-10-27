@@ -10,7 +10,7 @@ const DiscussionCard = ({ data }) => {
         <div className="card mt-1 mb-1" style={{ width: '100%', display: 'block' }}>
             <div className="card-body">
                 <p className='card-text fw-bold'>
-                    <small className='text-muted'>{data.creator.split("@")[0]} <span style={{ fontStyle: 'italic', fontWeight: 'normal' }}>posted </span> {dayjs(data.createdAt).fromNow()}</small>
+                    <small className='text-muted'>Posted {dayjs(data.createdAt).fromNow()}</small>
                 </p>
                 <h5 className="card-title" style={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', wordBreak: 'break-word' }}>
                     <a className='link text-capitalize' href={`/discussion/${data._id}`}>{data.heading}</a>

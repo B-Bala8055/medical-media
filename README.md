@@ -11,7 +11,6 @@ A free information sharing website made for allopathic practitioners.
 ### Pending
 * Share button
 * Add more login method
-* favicon
 * documentation
 * Media file connection
     * Profile media upload

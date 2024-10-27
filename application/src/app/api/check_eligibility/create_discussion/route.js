@@ -33,7 +33,7 @@ export async function GET(request) {
     }
 
     if (user.student) {
-        return NextResponse.json({ confirmation: false, message: "Students are restricted from create discussions. If you are a physician already, submit your latest ID and get verified." })
+        return NextResponse.json({ confirmation: false, message: "Students are restricted from creating discussions. If you are a physician already, submit your latest ID and get verified." })
     }
 
     return NextResponse.json({ confirmation: true, message: "Approved" })

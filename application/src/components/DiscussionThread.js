@@ -9,7 +9,7 @@ import striptags from 'striptags'
 dayjs.extend(relativeTime)
 
 const DiscussionThread = async (props) => {
-    const { threads } = props
+    const { threads, isVerifiedUser } = props
     const session = await auth()
     const mainThreads = threads.filter(item => item.underId === 'main')
 
@@ -32,6 +32,12 @@ const DiscussionThread = async (props) => {
                     return (
                         <div className='mb-2' key={"main-" + index}>
                             <small dangerouslySetInnerHTML={{ __html: striptags(item.comment, ['a', 'b', 'ul', 'ol', 'li', 'br', 'i', 'u', 'div']) }}></small>
+
+                            {item?.mediaLinks.length > 0 &&
+                                <div className="d-flex flex-wrap mb-3 mt-2">
+                                    {isVerifiedUser ? item?.mediaLinks.map((mediaUrl, linkIndex) => <a key={linkIndex} href={mediaUrl} target='_blank' className='link-secondary me-2'><small>{mediaUrl.split("/").pop()}</small></a>) : <p><small className="text-muted">Media files are hidden, because your ID is not verified.</small></p>}
+                                </div>}
+
                             <div className="mb-1 mt-1 d-flex align-items-center flex-wrap">
                                 <span className="badge badge-primary bg-secondary">{millify(votes)} VOTES</span>
                                 <form action={voteDiscussionThread}>
@@ -49,7 +55,7 @@ const DiscussionThread = async (props) => {
                                         </form>
                                     </>
                                 }
-                                <small className="text-muted ms-auto">{item.creator.split("@")[0]} posted {dayjs(item.createdAt).fromNow()}&nbsp;{dayjs(item.updatedAt).diff(item.createdAt) > 60000 && `(Edited)`}</small>
+                                <small className="text-muted ms-auto">{dayjs(item.createdAt).fromNow()}&nbsp;{dayjs(item.updatedAt).diff(item.createdAt) > 600000 && `(Edited)`}</small>
                             </div>
                             <div className="ms-md-4 mb-4 mt-3">
                                 <ul className="list-group">
@@ -66,7 +72,7 @@ const DiscussionThread = async (props) => {
                                                 <li className="list-group-item flex-wrap" key={"main-" + index + "sub-" + subIndex}>
                                                     <small>
                                                         {striptags(subItem.comment)}
-                                                        <span className='text-muted'> &nbsp;{subItem.creator.split("@")[0]} posted {dayjs(subItem.createdAt).fromNow()}&nbsp;{dayjs(subItem.updatedAt).diff(subItem.createdAt) > 60000 && `(Edited)`}</span>&nbsp;
+                                                        <span className='text-muted'> &nbsp;{dayjs(subItem.createdAt).fromNow()}&nbsp;{dayjs(subItem.updatedAt).diff(subItem.createdAt) > 600000 && `(Edited)`}</span>&nbsp;
                                                         <span className="badge badge-primary bg-secondary">{millify(votes1)} VOTES</span>
                                                         <form action={voteDiscussionThread} className="d-inline">
                                                             <input type="hidden" value={subItem._id.toString()} name="id" />
